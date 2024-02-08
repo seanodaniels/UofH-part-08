@@ -1,5 +1,6 @@
 const { ApolloServer } = require('@apollo/server')
 const { startStandaloneServer } = require('@apollo/server/standalone')
+const { v1: uuid } = require('uuid')
 
 let authors = [
   {
@@ -88,17 +89,43 @@ let books = [
 ]
 
 const typeDefs = `
-  type Query {
+  type Author {
+    name: String!
+    birthYear: String
+  }
+
+type Query {
     bookCount: Int!
     authorCount: Int!
+    allBooks: [Book!]!
+    findBook(title: String!): Book
   }
+
+  type Book {
+    title: String!
+    author: String!
+    published: String!
+    genres: [String]
+    id: ID!
+  }
+
 `
 
 const resolvers = {
   Query: {
     bookCount: () => books.length,
-    authorCount: () => authors.length
-  }
+    authorCount: () => authors.length,
+    allBooks: () => books,
+    findBook: (root, args) => books.find(b => b.title === args.title)
+  },
+  // Book: {
+  //   author: (root) => {
+  //     return {
+  //       name: root.name,
+  //       born: root.born,
+  //     }
+  //   }
+  // },
 }
 
 const server = new ApolloServer({
