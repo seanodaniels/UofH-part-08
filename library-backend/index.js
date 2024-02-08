@@ -97,7 +97,7 @@ const typeDefs = `
 const resolvers = {
   Query: {
     bookCount: () => books.length,
-    authorCount: () => books.filter(b => b.author).length
+    authorCount: () => authors.length
   }
 }
 
