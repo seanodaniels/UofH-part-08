@@ -91,8 +91,9 @@ let books = [
 const typeDefs = `
   type Author {
     name: String!
-    birthYear: String
+    born: String
     bookCount: Int!
+    id: ID!
   }
 
 type Query {
@@ -107,9 +108,18 @@ type Query {
   type Book {
     title: String!
     author: String!
-    published: String!
+    published: Int!
     genres: [String]
     id: ID!
+  }
+
+  type Mutation {
+    addBook(
+      title: String!
+      author: String!
+      published: Int!
+      genres: [String]
+    ): Book
   }
 
 `
@@ -138,16 +148,19 @@ const resolvers = {
       return authorBooks
     }
   },
-
-  // Book: {
-  //   author: (root) => {
-  //     return {
-  //       name: root.name,
-  //       born: root.born,
-  //     }
-  //   }
-  // },
+  Mutation: {
+    addBook: (root, args) => {
+      let newBook = { ...args, id: uuid() }
+      books = books.concat(newBook)
+      if (authors.find(a => a.name !== args.author)) {
+        authors = authors.concat({ name: args.author, id: uuid() })
+      }
+      return newBook
+    }
+  }
 }
+
+
 
 const server = new ApolloServer({
   typeDefs,
