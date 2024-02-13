@@ -3,8 +3,9 @@ import { gql, useQuery, useMutation } from "@apollo/client"
 import { ALL_AUTHORS, CHANGE_AUTHOR } from "../queries"
 
 const Authors = (props) => {
-  const [birthAuthor, setBirthAuthor] = useState("")
+  const [birthAuthor, setBirthAuthor] = useState(null)
   const [birthYear, setBirthYear] = useState('')
+  const [notification, setNotification] = useState('')
   const result = useQuery(ALL_AUTHORS)
   const [changeAuthor] = useMutation(CHANGE_AUTHOR, {
     refetchQueries: [{ query: ALL_AUTHORS }],
@@ -17,15 +18,24 @@ const Authors = (props) => {
   const setBirth = async (event) => {
     event.preventDefault()
 
-    changeAuthor({
-      variables: { name: birthAuthor, setBornTo: parseInt(birthYear) },
-    })
+    if (birthAuthor) {
+      changeAuthor({
+        variables: { name: birthAuthor, setBornTo: parseInt(birthYear) },
+      })
 
-    setBirthAuthor('')
-    setBirthYear('')
+      setBirthAuthor(null)
+      setBirthYear('')
+    } else {
+      setNotification('You need to click a name then enter an integer for the birth date')
+      setTimeout(() => {
+        setNotification(null)
+      }, 10000)
+    }
   }
 
   const authors = result.data.allAuthors
+
+  const testingVar = 'sean od'
 
   return (
     <div>
@@ -39,7 +49,7 @@ const Authors = (props) => {
           </tr>
           {authors.map((a) => (
             <tr key={a.name}>
-              <td>{a.name}</td>
+              <td onClick={(e) => setBirthAuthor(a.name)}>{a.name}</td>
               <td>{a.born}</td>
               <td>{a.bookCount}</td>
             </tr>
@@ -48,10 +58,7 @@ const Authors = (props) => {
       </table>
       <h2>set birth year</h2>
       <form onSubmit={setBirth}>
-        <div>name <input
-          value={birthAuthor}
-          onChange={({ target }) => setBirthAuthor(target.value)}
-        /></div>
+        <div>name {birthAuthor}</div>
         <div>
           born
         <input
@@ -61,6 +68,7 @@ const Authors = (props) => {
         </div>
         <button type="submit">update Author</button>
       </form>
+      <div className="notification">{notification}</div>
     </div>
   )
 }
