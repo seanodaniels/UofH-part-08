@@ -96,7 +96,7 @@ const typeDefs = `
     id: ID!
   }
 
-type Query {
+  type Query {
     booksCount: Int!
     bookCount: Int!
     authorCount: Int!
