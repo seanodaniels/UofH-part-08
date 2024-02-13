@@ -12,13 +12,13 @@ const App = () => {
   return (
     <div>
       <div id="nav-primary">
-        <Link to="/authors">authors</Link>
+        <Link to="/">authors</Link>
         <Link to="/books">books</Link>
         <Link to="/create-book">create book</Link>
       </div>
 
       <Routes>
-        <Route path="/authors/" element={<Authors />} />
+        <Route path="/" element={<Authors />} />
         <Route path="/books/" element={<Books />} />
         <Route path="/create-book/" element={<NewBook />} />
       </Routes>
